@@ -103,8 +103,7 @@ public class RecordHelper {
         Logger.d(TAG, "参数： %s", currentConfig.toString());
         Logger.i(TAG, "pcm缓存 tmpFile: %s", tempFilePath);
         Logger.i(TAG, "录音文件 resultFile: %s", filePath);
-
-
+        files.clear();
         tmpFile = new File(tempFilePath);
         audioRecordThread = new AudioRecordThread();
         audioRecordThread.start();
@@ -421,12 +420,17 @@ public class RecordHelper {
             outputStream = new BufferedOutputStream(fos);
 
             for (int i = 0; i < files.size(); i++) {
-                BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(files.get(i)));
-                int readCount;
-                while ((readCount = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, readCount);
+                try {
+                    BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(files.get(i)));
+                    int readCount;
+                    while ((readCount = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, readCount);
+                    }
+                    inputStream.close();
+                } catch (Exception e) {
+                    Logger.e(e, TAG, e.getMessage());
+                    //某个文件错误了继续合并
                 }
-                inputStream.close();
             }
         } catch (Exception e) {
             Logger.e(e, TAG, e.getMessage());
