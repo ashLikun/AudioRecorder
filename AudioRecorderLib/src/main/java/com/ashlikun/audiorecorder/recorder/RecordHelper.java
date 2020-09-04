@@ -107,6 +107,7 @@ public class RecordHelper {
         tmpFile = new File(tempFilePath);
         audioRecordThread = new AudioRecordThread();
         audioRecordThread.start();
+        state = RecordState.RECORDING;
     }
 
     public void stop() {
@@ -276,7 +277,6 @@ public class RecordHelper {
         }
 
         private void startPcmRecorder() {
-            state = RecordState.RECORDING;
             notifyState();
             Logger.d(TAG, "开始录制 Pcm");
             FileOutputStream fos = null;
@@ -318,9 +318,7 @@ public class RecordHelper {
         }
 
         private void startMp3Recorder() {
-            state = RecordState.RECORDING;
             notifyState();
-
             try {
                 audioRecord.startRecording();
                 short[] byteBuffer = new short[bufferSize];
